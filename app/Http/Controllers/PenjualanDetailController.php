@@ -17,12 +17,13 @@ class PenjualanDetailController extends Controller
     {
         // @todo-jez fetch products
 
-        $authUserBranchId = Auth::user()->branch->id;
+
         if (auth()->user()->level === 1) {
             $produk = Produk::orderBy('nama_produk')
                 ->where('stok', '>=', 1)
                 ->get();
         } else {
+        $authUserBranchId = Auth::user()->branch->id;
             $produk = Produk::orderBy('nama_produk')
                 ->where('stok', '>=', 1)
                 ->whereHas('branchStocks', function ($query) use ($authUserBranchId) {
