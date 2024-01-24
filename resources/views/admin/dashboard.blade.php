@@ -61,14 +61,14 @@
         <!-- small box -->
         <div class="small-box bg-olive">
             <div class="inner">
-                <h3>{{ $supplier }}</h3>
+                <h3>{{ $penjualan }}</h3>
 
-                <p>Total Supplier</p>
+                <p>Sales</p>
             </div>
             <div class="icon">
                 <i class="fa fa-truck"></i>
             </div>
-            <a href="{{ route('supplier.index') }}" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('penjualan.index') }}" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -76,7 +76,7 @@
 <!-- /.row -->
 
 <div class="row">
-<div class="col-lg-4 col-xs-6">
+{{-- <div class="col-lg-4 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
@@ -89,10 +89,10 @@
             </div>
             <a href="{{ route('penjualan.index') }}" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
         </div>
-    </div>
+    </div> --}}
     <!-- ./col -->
 
-    <div class="col-lg-4 col-xs-6">
+    {{-- <div class="col-lg-4 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-red">
             <div class="inner">
@@ -105,10 +105,10 @@
             </div>
             <a href="{{ route('pengeluaran.index') }}" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
         </div>
-    </div>
+    </div> --}}
     <!-- ./col -->
     <!-- visit "codeastro" for more projects! -->
-    <div class="col-lg-4 col-xs-6">
+    {{-- <div class="col-lg-4 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
@@ -121,7 +121,7 @@
             </div>
             <a href="{{ route('pembelian.index') }}" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
         </div>
-    </div>
+    </div> --}}
     <!-- ./col -->
 
     <!-- visit "codeastro" for more projects! -->

@@ -48,6 +48,9 @@ class ProdukController extends Controller
             ->addColumn('stok', function ($produk) {
                 return format_uang($produk->stok);
             })
+            ->addColumn('wholesale', function ($produk) {
+                return format_uang($produk->wholesale_price);
+            })
             
             ->addColumn('aksi', function ($produk) {
                 return '

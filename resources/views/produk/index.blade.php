@@ -37,6 +37,7 @@
                             <th>Selling Price</th>
                             <th>Discount</th>
                             <th>Total Available Stocks</th>
+                            <th>Wholesale Price</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -73,6 +74,7 @@
                 {data: 'harga_jual'},
                 {data: 'diskon'},
                 {data: 'stok'},
+                {data: 'wholesale_price'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });
@@ -124,6 +126,7 @@
                 $('#modal-form [name=harga_jual]').val(response.harga_jual);
                 $('#modal-form [name=diskon]').val(response.diskon);
                 $('#modal-form [name=stok]').val(response.stok);
+                $('#modal-form [name=wholesale_price]').val(response.wholesale_price);
             })
             .fail((errors) => {
                 alert('Unable to display data');

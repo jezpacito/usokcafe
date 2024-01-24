@@ -2,20 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BranchStock;
 use App\Models\Member;
 use App\Models\Penjualan;
 use App\Models\PenjualanDetail as SalesDetail;
 use App\Models\Produk;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PenjualanDetailController extends Controller
 {
     public function index()
     {
-        $produk = Produk::orderBy('nama_produk')
-        ->where('stok' , '>=' , 1)
-        ->get();
+        // @todo-jez fetch products
+
+        $authUserBranchId = Auth::user()->branch->id;
+        if (auth()->user()->level === 1) {
+            $produk = Produk::orderBy('nama_produk')
+                ->where('stok', '>=', 1)
+                ->get();
+        } else {
+            $produk = Produk::orderBy('nama_produk')
+                ->where('stok', '>=', 1)
+                ->whereHas('branchStocks', function ($query) use ($authUserBranchId) {
+                    $query->where('branch_stocks.branch_id', '=', $authUserBranchId);
+                })
+                ->get();
+        }
+        
         $member = Member::orderBy('nama')->get();
         $diskon = Setting::first()->diskon ?? 0;
 
@@ -36,7 +51,7 @@ class PenjualanDetailController extends Controller
 
     public function data($id)
     {
-    
+
         $detail = SalesDetail::with('produk')
             ->where('id_penjualan', $id)
             ->get();
@@ -47,14 +62,14 @@ class PenjualanDetailController extends Controller
 
         foreach ($detail as $item) {
             $row = array();
-            $row['kode_produk'] = '<span class="label label-success">'. $item->produk['kode_produk'] .'</span';
+            $row['kode_produk'] = '<span class="label label-success">' . $item->produk['kode_produk'] . '</span';
             $row['nama_produk'] = $item->produk['nama_produk'];
-            $row['harga_jual']  = '₱ '. format_uang($item->harga_jual);
-            $row['jumlah']      = '<input type="number" class="form-control input-sm quantity" data-id="'. $item->id_penjualan_detail .'" value="'. $item->jumlah .'">';
+            $row['harga_jual']  = '₱ ' . format_uang($item->harga_jual);
+            $row['jumlah']      = '<input type="number" class="form-control input-sm quantity" data-id="' . $item->id_penjualan_detail . '" value="' . $item->jumlah . '">';
             $row['diskon']      = $item->diskon . '%';
-            $row['subtotal']    = '₱ '. format_uang($item->subtotal);
+            $row['subtotal']    = '₱ ' . format_uang($item->subtotal);
             $row['aksi']        = '<div class="btn-group">
-                                    <button onclick="deleteData(`'. route('transaksi.destroy', $item->id_penjualan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                                    <button onclick="deleteData(`' . route('transaksi.destroy', $item->id_penjualan_detail) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                                 </div>';
             $data[] = $row;
 
@@ -63,8 +78,8 @@ class PenjualanDetailController extends Controller
         }
         $data[] = [
             'kode_produk' => '
-                <div class="total hide">'. $total .'</div>
-                <div class="total_item hide">'. $total_item .'</div>',
+                <div class="total hide">' . $total . '</div>
+                <div class="total_item hide">' . $total_item . '</div>',
             'nama_produk' => '',
             'harga_jual'  => '',
             'jumlah'      => '',
@@ -83,12 +98,12 @@ class PenjualanDetailController extends Controller
     public function store(Request $request)
     {
         $produk = Produk::where('id_produk', $request->id_produk)->first();
-        if (! $produk) {
+        if (!$produk) {
             return response()->json('Data failed to save', 400);
         }
 
         // @todo-jez
-        if(auth()->user()->level === 1) {
+        if (auth()->user()->level === 1) {
             $priceAmount =  $produk->wholesale_price;
         } else {
             $priceAmount = $produk->harga_jual;
@@ -102,12 +117,12 @@ class PenjualanDetailController extends Controller
         $detail->jumlah = 1;
         $detail->diskon = $produk->diskon; //discount is in price
         $detail->subtotal = $priceAmount - ($produk->diskon / 100 * $priceAmount);
-        
+
         $detail->save();
 
         return response()->json('Data saved successfully', 200);
     }
-    
+
     public function update(Request $request, $id)
     {
         try {
@@ -115,19 +130,22 @@ class PenjualanDetailController extends Controller
             $product =  Produk::where('id_produk', $detail->id_produk)->first();
             $detail->jumlah = (int) $request->jumlah;
             $detail->subtotal = (int) $detail->harga_jual * (int) $request->jumlah - (($detail->diskon * (int) $request->jumlah) / 100 * (int) $detail->harga_jual);
-         
+
             // Simulate an error condition for demonstration purposes
-            if($product->stok < $request->jumlah) {
-                if($product->stok <= 0) {
-                    throw new \Exception("Error: No available stock for item ". $product->nama_produk);
+            if ($product->stok < $request->jumlah) {
+                $stock = $product->stok;
+                if ($product->stok <= 0) {
+                    throw new \Exception("Error: No available stock for item " . $product->nama_produk);
                 }
-                    throw new \Exception("Error: The available stock for item ". $product->nama_produk. " is only ". $product->stok ." pc/s");
+                if(auth()->user()->level === 1){
+                    $stock = BranchStock::where('id_produk', $product->id_produk)->sum('stocks');
+                }
+                throw new \Exception("Error: The available stock for item " . $product->nama_produk . " is only " . $stock . " pc/s");
             } else {
                 $detail->update();
             }
-    
+
             return response()->json(['success' => true]);
-    
         } catch (\Exception $e) {
             // Handle the exception and return an error response
             return response()->json(['error' => $e->getMessage()], 500);
@@ -152,9 +170,9 @@ class PenjualanDetailController extends Controller
             'totalrp' => format_uang($total),
             'bayar' => $bayar,
             'bayarrp' => format_uang($bayar),
-            'terbilang' => ucwords(terbilang($bayar). ' PHP'),
+            'terbilang' => ucwords(terbilang($bayar) . ' PHP'),
             'kembalirp' => format_uang($kembali),
-            'kembali_terbilang' => ucwords(terbilang($kembali). ' PHP'),
+            'kembali_terbilang' => ucwords(terbilang($kembali) . ' PHP'),
         ];
 
         return response()->json($data);

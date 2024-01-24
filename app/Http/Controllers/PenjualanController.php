@@ -85,6 +85,8 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
+        try {
+
         //has initial sale value open access form
         // @todo-jez savings sales here
         $penjualan = Sale::findOrFail($request->id_penjualan);
@@ -120,6 +122,10 @@ class PenjualanController extends Controller
                     ->where('branch_id', auth()->user()->branch->id )
                     ->first();
 
+                    if(!$branchStock) {
+                       return redirect()->back()->withErrors("Error: No available stocks for item " . $produk->nama_produk );
+                    }
+
                     $branchStock->stocks -= $item->jumlah; //amount
                     $branchStock->update();
             }
@@ -127,6 +133,11 @@ class PenjualanController extends Controller
 
             //@todo-jez update branch stock
         }
+    } catch (\Exception $e) {
+        // Handle the exception and return an error response
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+
 
         return redirect()->route('transaksi.selesai');
     }

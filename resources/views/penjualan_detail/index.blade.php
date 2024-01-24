@@ -33,7 +33,7 @@ Sales Transactions
 
 @section('breadcrumb')
     @parent
-    <li class="active">Sales Transactions </li>
+    <li class="active">Sales Transactions</li>
 @endsection
 {{-- todo --}}
 @section('content')
@@ -154,6 +154,7 @@ Sales Transactions
 @endsection
 
 @push('scripts')
+{{-- @todo-jez --}}
 <script>
     let table, table2;
 
@@ -217,6 +218,7 @@ Sales Transactions
                     });
                 })
                 .fail(errors => {
+                    setTimeout(function() {
                     if( errors.responseJSON && errors.responseJSON.error ) {
                         let errorMessage = errors.responseJSON.error;
                         let numberMatch = errorMessage.match(/is only (\d+) pc\/s/);
@@ -226,13 +228,12 @@ Sales Transactions
                             $(this).val(extractedNumber);
                                 alert(errorMessage);
                                 return;
-        }
+                            }
                         $(this).val(1);
                         alert(errorMessage);
                         return;
-
-                        
                     }
+                }, 5000);
                     $(this).val(jumlah);
                     alert('Unable to save data');
                     return;

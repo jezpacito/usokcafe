@@ -30,17 +30,9 @@ class UserTableSeeder extends Seeder
             [
                 'name' => 'Administrator',
                 'email' => 'admin@mail.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt('mypassword123*'),
                 'foto' => '/img/user.jpg',
                 'level' => 1
-            ],
-            [
-                'name' => 'Den Bautista',
-                'email' => 'den.bautista@mail.com',
-                'password' => bcrypt('usok.denbautista'),
-                'foto' => '/img/user.jpg',
-                'level' => 2,
-                'branch_id' => 2
             ],
             [
                 'name' => 'John Doe',
@@ -49,7 +41,14 @@ class UserTableSeeder extends Seeder
                 'foto' => '/img/user.jpg',
                 'level' => 2,
                 'branch_id' => 2
-            ]
+            ],
+            [
+                'name' => 'Admin Kingbo',
+                'email' => 'aldrico@usokcafe.store',
+                'password' => bcrypt('mypassword123*'),
+                'foto' => '/img/user.jpg',
+                'level' => 1
+            ],
         );
 
         array_map(function (array $user) {
