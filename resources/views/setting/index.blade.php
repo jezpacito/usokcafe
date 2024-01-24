@@ -51,7 +51,7 @@
                             <div class="tampil-logo"></div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label for="path_kartu_member" class="col-lg-2 control-label">Membership Card</label>
                         <div class="col-lg-4">
                             <input type="file" name="path_kartu_member" class="form-control" id="path_kartu_member"
@@ -60,15 +60,15 @@
                             <br>
                             <div class="tampil-kartu-member"></div>
                         </div>
-                    </div>
-                    <div class="form-group row">
+                    </div> --}}
+                    {{-- <div class="form-group row">
                         <label for="diskon" class="col-lg-2 control-label">Discount</label>
                         <div class="col-lg-2">
                             <input type="number" name="diskon" class="form-control" id="diskon" required>
                             <span class="help-block with-errors"></span>
                         </div>
-                    </div>
-                    <div class="form-group row">
+                    </div> --}}
+                    {{-- <div class="form-group row">
                         <label for="tipe_nota" class="col-lg-2 control-label">Note Type</label>
                         <div class="col-lg-2">
                             <select name="tipe_nota" class="form-control" id="tipe_nota" required>
@@ -77,7 +77,7 @@
                             </select>
                             <span class="help-block with-errors"></span>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="box-footer text-right">
                     <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Save Changes</button>

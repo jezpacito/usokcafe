@@ -20,4 +20,8 @@ class Branch extends Model
     {
         return $this->hasOne(User::class);
     }
+
+    public function sale(){
+        return $this->hasMany(Penjualan::class,'id_penjualan','id');
+    }
 }

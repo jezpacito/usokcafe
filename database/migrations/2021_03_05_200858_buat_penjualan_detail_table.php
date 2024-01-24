@@ -21,6 +21,7 @@ class BuatPenjualanDetailTable extends Migration
             $table->integer('jumlah');
             $table->tinyInteger('diskon')->default(0);
             $table->integer('subtotal');
+            $table->unsignedBigInteger('branch_id')->nullable();
             $table->timestamps();
         });
     }

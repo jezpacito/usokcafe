@@ -77,16 +77,8 @@ class BranchStockController extends Controller
      */
     public function store(Request $request)
     {
-
         // dd($request->all());
         DB::transaction(function () use ($request) {
-
-            /**
-             * create branch
-             * get only the latest branch
-             * 
-            */
-
           $branchStock  = BranchStock::where('id_produk' , $request->id_produk)
                 ->where('branch_id', $request->branch_id)
                 ->first();

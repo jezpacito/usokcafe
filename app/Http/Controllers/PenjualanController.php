@@ -21,7 +21,9 @@ class PenjualanController extends Controller
 
     public function data()
     {
-        $penjualan = Sale::with('member')->orderBy('id_penjualan', 'desc')->get();
+        $penjualan = Sale::
+        where('total_item', '>', 0)
+        ->with('member')->orderBy('id_penjualan', 'desc')->get();
 
         return datatables()
             ->of($penjualan)
@@ -86,7 +88,6 @@ class PenjualanController extends Controller
     public function store(Request $request)
     {
         try {
-
         //has initial sale value open access form
         // @todo-jez savings sales here
         $penjualan = Sale::findOrFail($request->id_penjualan);
@@ -98,7 +99,7 @@ class PenjualanController extends Controller
         $penjualan->diterima = $request->diterima;
         $penjualan->update();
 
-        $detail = SaleDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
+        $detail = SaleDetail::where('id_penjualan', $request->id_penjualan)->get();
         foreach ($detail as $item) {
             //discount
             $item->diskon = $request->diskon;
@@ -118,8 +119,8 @@ class PenjualanController extends Controller
 
             }
             if(auth()->user()->level === 2) {
-                $branchStock = BranchStock::where('id_produk', $produk->id_produk)
-                    ->where('branch_id', auth()->user()->branch->id )
+                $branch = auth()->user()->branch->id;
+                $branchStock = BranchStock::where('branch_id', '=', $branch)
                     ->first();
 
                     if(!$branchStock) {
@@ -128,10 +129,11 @@ class PenjualanController extends Controller
 
                     $branchStock->stocks -= $item->jumlah; //amount
                     $branchStock->update();
-            }
-           
 
-            //@todo-jez update branch stock
+                    $penjualan = Sale::findOrFail($request->id_penjualan);
+                    $penjualan->branch_id = $branch;
+                    $penjualan->update();
+            }
         }
     } catch (\Exception $e) {
         // Handle the exception and return an error response

@@ -84,11 +84,11 @@
             </li>
             
             <li class="header">REPORT</li>
-            <li>
+            {{-- <li>
                 <a href="{{ route('laporan.index') }}">
                     <i class="fa fa-file-pdf-o"></i> <span>Income</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="header">SYSTEM</li>
             <li>
                 <a href="{{ route('user.index') }}">

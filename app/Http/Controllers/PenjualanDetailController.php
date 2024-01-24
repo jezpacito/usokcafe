@@ -16,8 +16,6 @@ class PenjualanDetailController extends Controller
     public function index()
     {
         // @todo-jez fetch products
-
-
         if (auth()->user()->level === 1) {
             $produk = Produk::orderBy('nama_produk')
                 ->where('stok', '>=', 1)

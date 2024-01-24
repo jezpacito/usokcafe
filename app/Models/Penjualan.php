@@ -22,4 +22,8 @@ class Penjualan extends Model
     {
         return $this->hasOne(User::class, 'id', 'id_user');
     }
+
+    public function branch(){
+        return $this->hasOne(Branch::class, 'branch_id', 'id_penjualan');
+    }
 }
