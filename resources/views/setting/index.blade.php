@@ -71,7 +71,7 @@
                     {{-- <div class="form-group row">
                         <label for="tipe_nota" class="col-lg-2 control-label">Note Type</label>
                         <div class="col-lg-2">
-                            <select name="tipe_nota" class="form-control" id="tipe_nota" required>
+                            <select hname="tipe_nota" class="form-control" id="tipe_nota" required>
                                 <option value="1">Small Invoice</option>
                                 <option value="2">PDF Invoice</option>
                             </select>
