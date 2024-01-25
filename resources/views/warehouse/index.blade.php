@@ -5,41 +5,76 @@ Warehouse Stocks List
 @endsection
 
 @section('breadcrumb')
-    @parent
-    <li class="active">Warehouse Stocks List</li>
+@parent
+<li class="active">Warehouse Stocks List</li>
 @endsection
 
 @section('content')
 <div class="row">
     <div class="col-lg-12">
         <div class="box">
+            @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+            @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
             <div class="box-header with-border">
                 <div class="btn-group">
-                    <button onclick="addForm('{{ route('warehouse.store') }}')" class="btn btn-success  btn-flat"><i class="fa fa-plus-circle"></i> Manage Stock</button>
-                    {{-- <button onclick="deleteSelected('{{ route('warehouse.delete_selected') }}')" class="btn btn-danger  btn-flat"><i class="fa fa-trash"></i> Delete</button> --}}
-                    {{-- <button onclick="cetakBarcode('{{ route('warehouse.cetak_barcode') }}')" class="btn btn-warning  btn-flat"><i class="fa fa-barcode"></i> Print Barcode</button> --}}
+                    {{-- <button onclick="addForm('{{ route('warehouse.store') }}')" class="btn btn-success  btn-flat"><i
+                            class="fa fa-plus-circle"></i> Manage Stock
+                    </button> --}}
+
                 </div>
-            </div>
-            <div class="box-body table-responsive">
-                <form action="" method="post" class="form-produk">
+                <form action="{{ route('upload.restock') }}" method="post" class="form-setting" data-toggle="validator"
+                    enctype="multipart/form-data">
                     @csrf
-                    <table class="table table-stiped table-bordered table-hover">
-                        <thead>
-                            <th width="5%">
-                                <input type="checkbox" name="select_all" id="select_all">
-                            </th>
-                            <th width="5%">Product Code</th>
-                            <th>Product Name</th>
-                            <th># Of Stocks</th>
-                          
-                            <th>Created Date</th>
-                            <th width="15%"><i class="fa fa-cog"></i></th>
-                        </thead>
-                    </table>
+                    <div class="box-body" style="border: 2px solid #000; padding: 10px; margin: 10px">
+                        <div class="form-group row">
+                            <label for="path_logo" class="col-lg-2 control-label">Bulk Restock</label>
+                            <div class="col-lg-4">
+                                <input type="file" name="restock_csv" class="form-control" id="path_logo">
+                                <span class="help-block with-errors"></span>
+                                <br>
+                                <div class="tampil-logo"></div>
+                            </div>
+                        </div>
+                        <div class="box-footer text-left">
+                            <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Save
+                                Restock</button>
+                        </div>
+                    </div>
                 </form>
+                {{-- <button onclick="deleteSelected('{{ route('warehouse.delete_selected') }}')"
+                    class="btn btn-danger  btn-flat"><i class="fa fa-trash"></i> Delete</button> --}}
+                {{-- <button onclick="cetakBarcode('{{ route('warehouse.cetak_barcode') }}')"
+                    class="btn btn-warning  btn-flat"><i class="fa fa-barcode"></i> Print Barcode</button> --}}
             </div>
         </div>
+        <div class="box-body table-responsive">
+            <form action="" method="post" class="form-produk">
+                @csrf
+                <table class="table table-stiped table-bordered table-hover">
+                    <thead>
+                        <th width="5%">
+                            <input type="checkbox" name="select_all" id="select_all">
+                        </th>
+                        <th width="5%">Product Code</th>
+                        <th>Product Name</th>
+                        <th>Brand Name</th>
+                        <th># Of Stocks</th>
+                        <th>Created Date</th>
+                        <th width="15%"><i class="fa fa-cog"></i></th>
+                    </thead>
+                </table>
+            </form>
+        </div>
     </div>
+</div>
 </div>
 
 @includeIf('warehouse.form')
@@ -63,6 +98,7 @@ Warehouse Stocks List
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'product_code'},
                 {data: 'product_name'},
+                {data: 'brand_name'},
                 {data: 'stocks'},
                 // {data: 'notes'},
                 {data: 'created_at'},

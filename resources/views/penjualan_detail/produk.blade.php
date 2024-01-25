@@ -13,6 +13,7 @@
                         <th>Code</th>
                         <th>Name</th>
                         <th>Purchase Price</th>
+                        <th>Price</th>
                         <th><i class="fa fa-cog"></i></th>
                     </thead>
                     <tbody>
@@ -22,6 +23,12 @@
                                 <td><span class="label label-success">{{ $item->kode_produk }}</span></td>
                                 <td>{{ $item->nama_produk }}</td>
                                 <td>{{ $item->harga_beli }}</td>
+                                @if(auth()->user()->level === 1)
+                                <td>{{ $item->wholesale_price }}</td>
+                                @else
+                                <td>{{ $item->harga_jual }}</td>
+                                @endif
+                             
                                 <td>
                                     <a href="#" class="btn btn-primary btn-xs btn-flat"
                                         onclick="pilihProduk('{{ $item->id_produk }}', '{{ $item->kode_produk }}')">

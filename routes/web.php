@@ -12,6 +12,7 @@ use App\Http\Controllers\{
     PembelianDetailController,
     PenjualanController,
     PenjualanDetailController,
+    RestockController,
     SettingController,
     SupplierController,
     UserController,
@@ -112,5 +113,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['middleware' => 'level:1,2'], function () {
         Route::get('/profil', [UserController::class, 'profil'])->name('user.profil');
         Route::post('/profil', [UserController::class, 'updateProfil'])->name('user.update_profil');
+
+        Route::get('/restock/template',[RestockController::class,'downloadTemplate']);
+        Route::post('/upload/restock',[RestockController::class,'uploadRestore'])->name('upload.restock');
+
     });
 });

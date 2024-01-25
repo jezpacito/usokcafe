@@ -27,6 +27,9 @@ class WarehouseController extends Controller
             ->addColumn('product_name', function ($stock) {
                 return Produk::where('id_produk', $stock->id_produk)->first()->nama_produk;
             })
+            ->addColumn('brand_name', function ($stock) {
+                return Produk::where('id_produk', $stock->id_produk)->first()->merk;
+            })
             ->addColumn('stocks', function ($stock) {
                 return format_uang($stock->stock);
             })

@@ -112,6 +112,12 @@
                 </a>
             </li>
             @endif
+
+            <li>
+                <a href="{{url('/restock/template/')}}">
+                    <i class="fa fa-cart-arrow-down"></i> <span>Restock Excel Template</span>
+                </a>
+            </li>
         </ul>
     </section>
     <!-- /.sidebar -->
