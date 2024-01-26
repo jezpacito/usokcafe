@@ -21,7 +21,7 @@ class AddUserToBranchPolomolok extends Migration
                 'password' => bcrypt('mypassword123*'),
                 'foto' => '/img/user.jpg',
                 'level' => 2,
-                'branch_id' => 2
+                'branch_id' => 1
             ],
             [
                 'name' => 'bajunaidali6',
