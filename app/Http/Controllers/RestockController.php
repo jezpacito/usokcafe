@@ -40,22 +40,49 @@ class RestockController extends Controller
             $filePath = "/$name";
                    SimpleExcelReader::create(public_path($filePath))->getRows()
                    ->each(function (array $rowProperties) {
-
-                    DB::transaction(function () use($rowProperties){
+                    DB::transaction(function () use ($rowProperties) {
                         $product = Produk::where('kode_produk', $rowProperties['product_code'])->first();
-                        $warehouseStock = WarehouseStock::where('id_produk', $product->id_produk)->first();
- 
-                        $newStock = (int) $product->stok + (int) $rowProperties['stock_number'];
-                        $product->stok = $newStock;
-                        $warehouseStock->stock = $newStock;
-                        $product->update();
-                        $warehouseStock->update();
+        
+                        if ($product) {
+                            // Product exists, update its stock
+                            $newStock = (int)$product->stok + (int)$rowProperties['stock_number'];
+                            $product->stok = $newStock;
+                            $product->update();
+        
+                            // Check if WarehouseStock exists
+                            $warehouseStock = WarehouseStock::where('id_produk', $product->id_produk)->first();
+        
+                            if ($warehouseStock) {
+                                // WarehouseStock exists, update its stock
+                                $warehouseStock->stock = $newStock;
+                                $warehouseStock->update();
+                            } else {
+                                // WarehouseStock does not exist, create a new one
+                                WarehouseStock::create([
+                                    'id_produk' => $product->id_produk,
+                                    'stock' => $newStock,
+                                    // Add any other necessary fields
+                                ]);
+                            }
+                        } else {
+                            return redirect()->back()->with('error', 'An error occurred!');
+                        }
                     });
+
+                    // DB::transaction(function () use($rowProperties){
+                    //     $product = Produk::where('kode_produk', $rowProperties['product_code'])->first();
+                    //     $warehouseStock = WarehouseStock::where('id_produk', $product->id_produk)->first();
+ 
+                    //     $newStock = (int) $product->stok + (int) $rowProperties['stock_number'];
+                    //     $product->stok = $newStock;
+                    //     $warehouseStock->stock = $newStock;
+                    //     $product->update();
+                    //     $warehouseStock->update();
+                    // });
                     
                    });
                    return redirect()->back()->with('success', 'Restock successful!');
 
         }
-        return redirect()->back()->with('error', 'An error occurred!');
     }
 }
