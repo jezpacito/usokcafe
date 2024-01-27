@@ -9,13 +9,22 @@
             </div>
             <div class="pull-left info">
                 <p>{{ auth()->user()->name }}</p>
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                {{-- <a href="#"><i class="fa fa-circle text-success"></i> Online</a> --}}
             </div>
         </div>
         
         <!-- /.search form -->
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
+           
+            <li>
+                <a href="#">
+                    <i class="fa fa-circle text-success"></i> 
+                    <span>
+                        {{auth()->user()-> level === 1 ? ' Main Branch' : auth()->user()->branch->name}}
+                    </span>
+                </a>
+            </li>
             <li>
                 <a href="{{ route('dashboard') }}">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>

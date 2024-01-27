@@ -20,6 +20,7 @@
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                         <i class="icon fa fa-check"></i> Changes saved successfully
                     </div>
+                    <h3 class="text-primary mb-5">{{auth()->user()-> level === 1 ? ' Main Branch Account' : auth()->user()->branch->name}} </h3>
                     <div class="form-group row">
                         <label for="name" class="col-lg-2 control-label">Name</label>
                         <div class="col-lg-6">
