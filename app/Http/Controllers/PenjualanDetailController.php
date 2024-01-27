@@ -23,7 +23,7 @@ class PenjualanDetailController extends Controller
         } else {
         $authUserBranchId = Auth::user()->branch->id;
             $produk = Produk::orderBy('nama_produk')
-                ->where('stok', '>=', 1)
+                // ->where('stok', '>=', 1)
                 ->whereHas('branchStocks', function ($query) use ($authUserBranchId) {
                     $query->where('branch_stocks.branch_id', '=', $authUserBranchId);
                 })
