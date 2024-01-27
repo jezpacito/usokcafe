@@ -10,6 +10,7 @@ use App\Models\Produk;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PenjualanDetailController extends Controller
 {
@@ -22,12 +23,13 @@ class PenjualanDetailController extends Controller
                 ->get();
         } else {
         $authUserBranchId = Auth::user()->branch->id;
-            $produk = Produk::orderBy('nama_produk')
-                // ->where('stok', '>=', 1)
-                ->whereHas('branchStocks', function ($query) use ($authUserBranchId) {
-                    $query->where('branch_stocks.branch_id', '=', $authUserBranchId);
-                })
-                ->get();
+        $produk = DB::table('produk')
+        ->orderBy('nama_produk')
+        // ->where('stok', '>=', 1)
+        ->join('branch_stocks', 'produk.id_produk', '=', 'branch_stocks.id_produk')
+        ->where('branch_stocks.branch_id', '=', $authUserBranchId)
+        ->select('produk.*')
+        ->get();
         }
         
         $member = Member::orderBy('nama')->get();
