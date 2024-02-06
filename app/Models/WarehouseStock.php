@@ -15,10 +15,10 @@ class WarehouseStock extends Model
         'notes',
     ];
 
-    public function product()
-    {
-        return $this->belongsTo(Produk::class,'id_produk','id');
-    }
+    // public function product()
+    // {
+    //     return $this->belongsTo(Produk::class);
+    // }
 
     public function warehouseActivity(){
         return $this->hasMany(WarehouseStockActivity::class,'id_produk','id');

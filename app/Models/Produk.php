@@ -14,10 +14,10 @@ class Produk extends Model
     protected $primaryKey = 'id_produk';
     protected $guarded = [];
 
-    public function warehouseStock()
-    {
-        return $this->hasOne(WarehouseStock::class);
-    }
+// public function warehouseStock()
+// {
+//     return $this->hasMany(WarehouseStock::class);
+// }
 
     public function branchStocks()
     {
