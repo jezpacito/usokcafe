@@ -77,55 +77,84 @@ class BranchStockController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        DB::transaction(function () use ($request) {
-          $branchStock  = BranchStock::where('id_produk' , $request->id_produk)
-                ->where('branch_id', $request->branch_id)
-                ->first();
+        ///logic here
+        /*
+         *  add the stocks to branch 
+         *  subtract the stocks to warehouse and produk stock
+         *  and check if the stock is sufficient
+         * 
+        */
 
-                $branchStock = BranchStock::create([
-                    'id_produk' => $request->id_produk,
-                    'branch_id' => $request->branch_id,
-                    'stocks' => $request->stock,
-                ]);
+        $product = Produk::where('id_produk', $request->id_produk)
+        ->first();
+
+
+        $warehouse = WarehouseStock::where('id_produk', $product->id_produk)->first();
+
+        if($product->stok && $warehouse->stock < $request->stock){
+            throw new \Exception('Insufficient stock; the available stock is: '. $product->stok);
+        }
+
+        // minus the stock to the product and warehouse stocks
+        $productStockDeduction =  (int) $product->stok - $request->stock;
+        $warehouseDeduction = (int) $warehouse->stock - $request->stock;
+
+        $branchStock = BranchStock::create([
+            'id_produk' => $request->id_produk,
+            'branch_id' => $request->branch_id,
+            'stocks' => $request->stock,
+        ]);
+
+            //   BranchStockActivity::create([
+            //     'added_by_user' => auth()->user()->id,
+            //     'name' => 'Store',
+            //     'description' => auth()->user()->name . 'Added stock ( '. $request->stock . ' pc/s) to branch: ' . $branch->anme ,
+            //     'stock_number_before' => $branchStock->stock ? 0:,
+            //     'stock_number_after' => $request->stock,
+            //     'branch_stock_id' => $branchStock->id
+            // ]);
+
+        $product->update([
+            'stok' => $productStockDeduction
+        ]);
+        $warehouse->update([
+            'stock' =>  $warehouseDeduction,
+        ]);
+
+        // dd($request->all());
+        // DB::transaction(function () use ($request) {
+        //   $branchStock  = BranchStock::where('id_produk' , $request->id_produk)
+        //         ->where('branch_id', $request->branch_id)
+        //         ->first();
+
+        //         $branchStock = BranchStock::create([
+        //             'id_produk' => $request->id_produk,
+        //             'branch_id' => $request->branch_id,
+        //             'stocks' => $request->stock,
+        //         ]);
 
                 
-            if (!$branchStock) {
-               $stock_number_before = $branchStock->stock;
-            } else {
-                $stock_number_before = 0;
-            }
+        //     if (!$branchStock) {
+        //        $stock_number_before = $branchStock->stock;
+        //     } else {
+        //         $stock_number_before = 0;
+        //     }
 
             
-            $branch = Branch::where('id', $request->branch_id)
-                ->first();
+        //     $branch = Branch::where('id', $request->branch_id)
+        //         ->first();
 
-            BranchStockActivity::create([
-                'added_by_user' => auth()->user()->id,
-                'name' => 'Store',
-                'description' => auth()->user()->name . 'Added stock ( '. $request->stock . ' pc/s) to branch: ' . $branch->anme ,
-                'stock_number_before' =>  $stock_number_before,
-                'stock_number_after' => $request->stock,
-                'branch_stock_id' => $branchStock->id
-            ]);
+        //     BranchStockActivity::create([
+        //         'added_by_user' => auth()->user()->id,
+        //         'name' => 'Store',
+        //         'description' => auth()->user()->name . 'Added stock ( '. $request->stock . ' pc/s) to branch: ' . $branch->anme ,
+        //         'stock_number_before' =>  $stock_number_before,
+        //         'stock_number_after' => $request->stock,
+        //         'branch_stock_id' => $branchStock->id
+        //     ]);
 
-            $product = Produk::where('id_produk', $request->id_produk)
-                ->first();
-
-
-            $warehouse = WarehouseStock::where('id_produk', $product->id_produk)->first();
-
-            // minus the stock to the product and warehouse stocks
-            $productStockDeduction =  (int) $product->stok - $request->stock;
-            $warehouseDeduction = (int) $warehouse->stock - $request->stock;
-
-            $product->update([
-                'stok' => $productStockDeduction
-            ]);
-            $warehouse->update([
-                'stock' =>  $warehouseDeduction,
-            ]);
-        });
+           
+        // });
 
         return response()->json('Data saved successfully', 200);
     }

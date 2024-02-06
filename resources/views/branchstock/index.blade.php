@@ -76,7 +76,11 @@ Branch Stock Management
                         table.ajax.reload();
                     })
                     .fail((errors) => {
-                        alert('Unable to save data');
+                        if (errors.responseText) {
+                            alert('Insufficient stock!');
+                        } else {
+                            alert('Unable to save data');
+                        }
                         return;
                     });
             }

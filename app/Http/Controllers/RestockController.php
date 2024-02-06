@@ -68,18 +68,6 @@ class RestockController extends Controller
                             return redirect()->back()->with('error', 'An error occurred!');
                         }
                     });
-
-                    // DB::transaction(function () use($rowProperties){
-                    //     $product = Produk::where('kode_produk', $rowProperties['product_code'])->first();
-                    //     $warehouseStock = WarehouseStock::where('id_produk', $product->id_produk)->first();
- 
-                    //     $newStock = (int) $product->stok + (int) $rowProperties['stock_number'];
-                    //     $product->stok = $newStock;
-                    //     $warehouseStock->stock = $newStock;
-                    //     $product->update();
-                    //     $warehouseStock->update();
-                    // });
-                    
                    });
                    return redirect()->back()->with('success', 'Restock successful!');
 
