@@ -21,7 +21,7 @@ class Produk extends Model
 
     public function branchStocks()
     {
-        return $this->hasMany(BranchStock::class,'id','id_produk');
+        return $this->hasOne(BranchStock::class,'id','id_produk');
     }
 
 }

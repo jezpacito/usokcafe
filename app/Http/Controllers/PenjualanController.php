@@ -118,18 +118,17 @@ class PenjualanController extends Controller
                 $produk->update();
 
             }
+            //@todo-jez ===> issue: bug not reducing stock value to the branch stocks
             if(auth()->user()->level === 2) {
                 $branch = auth()->user()->branch->id;
                 $branchStock = BranchStock::where('branch_id', '=', $branch)
                     ->first();
 
-                    if(!$branchStock) {
+                    if(!$branchStock or $branchStock->stocks < 0 ) {
                        return redirect()->back()->withErrors("Error: No available stocks for item " . $produk->nama_produk );
                     }
 
-                    $branchStock->stocks -= $item->jumlah; //amount
-                    $branchStock->update();
-
+                    $branchStock->decrement('stocks', $item->jumlah);
                     $penjualan = Sale::findOrFail($request->id_penjualan);
                     $penjualan->branch_id = $branch;
                     $penjualan->update();

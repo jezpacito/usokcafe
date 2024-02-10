@@ -25,9 +25,10 @@ class PenjualanDetailController extends Controller
         $authUserBranchId = Auth::user()->branch->id;
         $produk = DB::table('produk')
         ->orderBy('nama_produk')
-        // ->where('stok', '>=', 1)
         ->join('branch_stocks', 'produk.id_produk', '=', 'branch_stocks.id_produk')
         ->where('branch_stocks.branch_id', '=', $authUserBranchId)
+        ->where('branch_stocks.stocks', '>', 0)
+        ->groupBy('produk.id_produk') // Group by the product's primary key
         ->select('produk.*')
         ->get();
         }
@@ -133,18 +134,46 @@ class PenjualanDetailController extends Controller
             $detail->subtotal = (int) $detail->harga_jual * (int) $request->jumlah - (($detail->diskon * (int) $request->jumlah) / 100 * (int) $detail->harga_jual);
 
             // Simulate an error condition for demonstration purposes
-            if ($product->stok < $request->jumlah) {
-                $stock = $product->stok;
-                if ($product->stok <= 0) {
-                    throw new \Exception("Error: No available stock for item " . $product->nama_produk);
+            $stock = BranchStock::where('id_produk', $product->id_produk)->sum('stocks');
+
+            //cashier
+            if(auth()->user()->level === 2) {
+                if($stock < $request->jumlah) {
+                    throw new \Exception("Error: The available stock for item " . $product->nama_produk . " is only " . $stock . " pc/s");
                 }
-                if(auth()->user()->level === 1){
-                    $stock = BranchStock::where('id_produk', $product->id_produk)->sum('stocks');
-                }
-                throw new \Exception("Error: The available stock for item " . $product->nama_produk . " is only " . $stock . " pc/s");
-            } else {
+
                 $detail->update();
+            } else {
+                if ($product->stok < $request->jumlah) {
+                    $stock = $product->stok;
+                    if ($stock < 0) {
+                        throw new \Exception("Error: The available stock for item " . $product->nama_produk . " is only " . $stock . " pc/s");
+                    }
+                    // throw new \Exception("Error: The available stock for item " . $product->nama_produk . " is only " . $stock . " pc/s");
+                }
             }
+
+
+            
+            // else {
+            //     if ($product->stok < $request->jumlah) {
+            //         $stock = $product->stok;
+            //         if ($product->stok <= 0) {
+            //             throw new \Exception("Error: No available stock for item " . $product->nama_produk);
+            //         }
+            //         if(auth()->user()->level === 1){
+            //             $stock = BranchStock::where('id_produk', $product->id_produk)->sum('stocks');
+            //         }
+            //         throw new \Exception("Error: The available stock for item " . $product->nama_produk . " is only " . $stock . " pc/s");
+            //     } else {
+            //         $detail->update();
+            //     }
+            // }
+
+         
+
+
+            
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
